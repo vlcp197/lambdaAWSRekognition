@@ -1,4 +1,3 @@
-from traceback import print_tb
 import boto3
 import json
 
@@ -49,8 +48,14 @@ def gera_dados_json(resultado_comparacao):
             dados_json.append(perfil)
     return dados_json
 
+def publica_dados(dados_json):
+    arquivo = s3.Object('vlcp-site', 'dados.json')
+    arquivo.put(Body=json.dumps(dados_json))
+
+
 faces_detectadas = detecta_faces() 
 faceId_detectadas = cria_lista_faceId_detectadas(faces_detectadas)
 resultado_comparacao = compara_imagens(faceId_detectadas)
 dados_json = gera_dados_json(resultado_comparacao)
+publica_dados(dados_json)
 print(json.dumps(dados_json, indent=4))
